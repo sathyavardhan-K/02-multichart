@@ -1,0 +1,21 @@
+.allcharts{
+    /* background-color: rgb(219, 245, 246); */
+    display: grid;
+    grid-template-columns: auto auto;
+    padding: 30px;
+    
+}
+
+.chart-container {
+    width: 400px;  /* Adjust as needed */
+    height: 490px; /* Adjust as needed */
+    margin: 20px;
+    padding: 20px;
+    border: 3px solid black; /* Add border */
+    display: inline-block;
+    vertical-align: top; /* Align containers next to each other */
+}
+
+.chart-container h1{
+    text-align: center;
+}

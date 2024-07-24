@@ -1,0 +1,17 @@
+{
+  "name": "multi_chart",
+  "version": "0.1.0",
+  "size": {
+    "width": 5,
+    "height": 3
+  },
+  "mapping": [
+    {
+      "dataSetId": "a8dda86c-a71d-4559-b48e-52867c21b19d",
+      "alias": "multi",
+      "fields": []
+    }
+  ],
+  "fileName": "manifest.json",
+  "id": "3e8d88e6-247a-42e2-a628-2b70a63b867e"
+}

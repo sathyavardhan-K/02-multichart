@@ -1,0 +1,387 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="styles/app.css" />
+    <link rel="stylesheet" href="style.css">
+
+    
+  </head>
+  <body>
+    <!-- <header id="header">Delivery charge about different customer cities</header> -->
+
+
+    <div class="allcharts">
+      <div class="chart-container">
+        <h1 class="topic">Bar Chart</h1>
+        <canvas id="myChart1" width="200" height="200"></canvas>
+      </div>
+      <div class="chart-container">
+        <h1 class="topic">Doughnut Chart</h1>
+        <canvas id="myChart2"  width="200" height="100"></canvas>
+      </div>
+  
+      <div class="chart-container">
+        <h1 class="topic">Line Chart</h1>
+        <canvas id="myChart3"  width="200" height="200"></canvas>
+      </div>
+      <div class="chart-container">
+        <h1 class="topic">Polar Area Chart</h1>
+        <canvas id="myChart4"  width="300" height="200"></canvas>
+      </div>
+    </div>
+   
+    
+    <main id="app"></main>
+    <script src="js/helpers.js"></script>
+    <script src="components/router.js"></script>
+    <script src="components/autocomplete.js"></script>
+    <script src="components/modal.js"></script>
+    <script src="components/table.js"></script>
+    <script src="components/floatingactionbutton.js"></script>
+    <script src="https://unpkg.com/ryuu.js"></script>
+    <script src="https://unpkg.com/@domoinc/domo-phoenix/build/global/domoPhoenixWithMaps.js"></script>
+    <script src="js/app.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/patternomaly"></script>
+    
+
+    <script>
+
+      //total = over all sum
+      //avg1 = (eachcity/total)%100
+
+      
+      const fields = ['customer_city', 'freight_value'];
+      const groupBy = ['customer_city'];
+      domo.get(`/data/v1/multi?fields=${fields.join()}&groupby=${groupBy.join()}`)
+
+      .then(function(value){
+
+        console.log("value", value);
+
+
+        value.sort((a,b)=>b.freight_value - a.freight_value);
+
+
+
+        const top10 = value.slice(0,10);
+        console.log(top10);
+
+        
+        let labelArr =[];
+        let dataArr =[];
+
+        for(const iterator of top10){
+          labelArr.push(iterator.customer_city);
+          dataArr.push(iterator.freight_value);
+        }
+        
+        
+        // for(const i of dataArr){
+        //   console.log(i);
+        //   sum=i+sum;
+        // }
+        let sum = dataArr.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
+
+        console.log(dataArr);
+
+        let avgArr =[];
+        
+        for( const j of dataArr){
+          console.log(j)
+          avgArr.push((j/sum) * 100);
+          console.log()
+        }
+        
+
+
+        //Barchart
+        const ctx = document.getElementById('myChart1');
+        const BarChart = new Chart(ctx, {
+              type: 'bar',
+              data: {
+              labels: labelArr, //x-axis
+                datasets: [{
+                  label: 'Delivery Value By Cities', 
+                  data: avgArr, //y-axis
+                  backgroundColor: [
+                    'rgba(75, 192, 192, 0.1)',
+                    'rgba(54, 162, 235, 0.1)',
+                    'rgba(255, 206, 86, 0.1)',
+                    'rgba(255, 119, 0, 0.1)',
+                    'rgba(153, 102, 255, 0.1)',
+                    'rgba(245, 255, 12, 0.1)',
+                    'rgba(78, 255, 255, 0.1)',
+                    'rgba(162, 174, 165, 0.1)',
+                    'rgba(251, 145, 248, 0.1)',
+                    'rgba(255, 99, 132, 0.1)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 119, 0, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(245, 255, 12, 1)',
+                    'rgba(78, 255, 255, 1)',
+                    'rgba(162, 174, 165, 1)',
+                    'rgba(251, 145, 248, 1)',
+                    'rgba(255, 99, 132, 1)',
+                ],
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  borderWidth: 2,
+
+                  hoverBackgroundColor: [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(255, 119, 0, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(245, 255, 12, 0.6)',
+                    'rgba(78, 255, 255, 0.6)',
+                    'rgba(162, 174, 165, 0.6)',
+                    'rgba(251, 145, 248, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    ],
+                    hoverBorderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 119, 0, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(245, 255, 12, 1)',
+                    'rgba(78, 255, 255, 1)',
+                    'rgba(162, 174, 165, 1)',
+                    'rgba(251, 145, 248, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    ]
+                }]
+              },
+              options: {
+                scales: {
+                  y: {
+                    beginAtZero: true
+                  },
+            
+                }
+              },
+              plugins: {
+                    title: {
+                        display: true,
+                        text: 'Bar Chart'
+                    }
+                }
+
+            });
+
+
+  
+
+
+            //Doughnut Chart
+            const doughnutCtx = document.getElementById('myChart2').getContext('2d');
+            const doughnutChart = new Chart(doughnutCtx, {
+            type: 'doughnut',
+            data: {
+                labels: labelArr,
+                datasets: [{
+                    data: avgArr,
+                    backgroundColor: [
+                    'rgba(75, 192, 192, 0.1)',
+                    'rgba(54, 162, 235, 0.1)',
+                    'rgba(255, 206, 86, 0.1)',
+                    'rgba(255, 119, 0, 0.1)',
+                    'rgba(153, 102, 255, 0.1)',
+                    'rgba(245, 255, 12, 0.1)',
+                    'rgba(78, 255, 255, 0.1)',
+                    'rgba(162, 174, 165, 0.1)',
+                    'rgba(251, 145, 248, 0.1)',
+                    'rgba(255, 99, 132, 0.1)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 119, 0, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(245, 255, 12, 1)',
+                    'rgba(78, 255, 255, 1)',
+                    'rgba(162, 174, 165, 1)',
+                    'rgba(251, 145, 248, 1)',
+                    'rgba(255, 99, 132, 1)',
+                ],
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  borderWidth: 2,
+
+                    hoverBackgroundColor: [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(255, 119, 0, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(245, 255, 12, 0.6)',
+                    'rgba(78, 255, 255, 0.6)',
+                    'rgba(162, 174, 165, 0.6)',
+                    'rgba(251, 145, 248, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    ],
+                    hoverBorderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 119, 0, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(245, 255, 12, 1)',
+                    'rgba(78, 255, 255, 1)',
+                    'rgba(162, 174, 165, 1)',
+                    'rgba(251, 145, 248, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Delivery Charge By Cities'
+                    }
+                }
+            }
+        });
+
+
+
+        //Line Chart
+
+        const Linectx = document.getElementById('myChart3').getContext('2d');
+
+        const Linechart = new Chart(Linectx, {
+        type: 'line',
+        data: {
+            labels: labelArr,
+            datasets: [{
+                label: 'Delivery Value By Cities',
+                data: avgArr,
+                backgroundColor: 'rgba(255, 206, 86, 0.1)',
+                borderColor: 'rgba(255, 206, 86, 0.8)',
+                borderWidth: 2,
+                hoverBackgroundColor: 'rgba(255, 206, 86, 0.6)',
+                hoverBorderColor: 'rgba(255, 206, 86, 1)'
+            }]
+        },
+        options: {
+            plugins: {
+                title: {
+                    display: true,
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+      });
+
+            // Polar Area Chart
+      const Polarctx = document.getElementById('myChart4').getContext('2d');
+      const Polarchart = new Chart(Polarctx, {
+          type: 'polarArea',
+          data: {
+              labels: labelArr,
+              datasets: [{
+                  label: 'My First Dataset',
+                  data: avgArr,
+                  // backgroundColor: [
+                  //     'rgba(75, 192, 192, 1)',
+                  //       'rgba(54, 162, 235, 1)',
+                  //       'rgba(255, 206, 86, 1)',
+                  //       'rgba(255, 119, 0, 1)',
+                  //       'rgba(153, 102, 255, 1)',
+                  //       'rgba(245, 255, 12, 1)',
+                  //       'rgba(78, 255, 255, 1)',
+                  //       'rgba(162, 174, 165, 1)',
+                  //       'rgba(251, 145, 248, 1)',
+                  //       'rgba(255, 99, 132, 1)'
+                  // ]
+
+
+                  backgroundColor: [
+                    'rgba(75, 192, 192, 0.1)',
+                    'rgba(54, 162, 235, 0.1)',
+                    'rgba(255, 206, 86, 0.1)',
+                    'rgba(255, 119, 0, 0.1)',
+                    'rgba(153, 102, 255, 0.1)',
+                    'rgba(245, 255, 12, 0.1)',
+                    'rgba(78, 255, 255, 0.1)',
+                    'rgba(162, 174, 165, 0.1)',
+                    'rgba(251, 145, 248, 0.1)',
+                    'rgba(255, 99, 132, 0.1)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 119, 0, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(245, 255, 12, 1)',
+                    'rgba(78, 255, 255, 1)',
+                    'rgba(162, 174, 165, 1)',
+                    'rgba(251, 145, 248, 1)',
+                    'rgba(255, 99, 132, 1)',
+                ],
+                  borderWidth: 1,
+                  borderRadius: 10,
+                  borderWidth: 2,
+
+                    hoverBackgroundColor: [
+                    'rgba(75, 192, 192, 0.6)',
+                    'rgba(54, 162, 235, 0.6)',
+                    'rgba(255, 206, 86, 0.6)',
+                    'rgba(255, 119, 0, 0.6)',
+                    'rgba(153, 102, 255, 0.6)',
+                    'rgba(245, 255, 12, 0.6)',
+                    'rgba(78, 255, 255, 0.6)',
+                    'rgba(162, 174, 165, 0.6)',
+                    'rgba(251, 145, 248, 0.6)',
+                    'rgba(255, 99, 132, 0.6)',
+                    ],
+                    hoverBorderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(255, 119, 0, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(245, 255, 12, 1)',
+                    'rgba(78, 255, 255, 1)',
+                    'rgba(162, 174, 165, 1)',
+                    'rgba(251, 145, 248, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    ]
+
+              }]
+          },
+          options: {
+              plugins: {
+                  title: {
+                      display: true,
+                      text: 'Delivery Value By Cities'
+                  }
+              }
+          }
+      });
+
+
+    });
+    </script>
+  </body>
+</html>
+
+
+
